@@ -1,0 +1,32 @@
+- name: Playbook to deploy app on target Server
+  hosts: targets
+  become: yes
+  become_user: root
+  tasks:
+    - name: Creates directory
+      file:
+        path: /var/www/inc
+        state: directory
+        mode: '0777'
+
+    - name: Creates file
+      file:
+        path: /var/www/inc/dbinfo.inc
+        state: touch
+
+    - name: Creates Content
+      copy:
+        content: |
+          <?php
+          define('DB_SERVER', 'database1.cp86akek6g2n.us-east-1.rds.amazonaws.com');
+          define('DB_USERNAME', 'admin');
+          define('DB_PASSWORD', 'admin123');
+          define('DB_DATABASE', 'database1');
+          ?>
+        dest: /var/www/inc/dbinfo.inc
+        mode: '0777'
+
+    - name: Copy File to ansible target 
+      copy:
+        src: /home/ubuntu/SamplePHP.php
+        dest: /var/www/html
